@@ -10,28 +10,23 @@ class ToggleButton extends HTMLElement {
 		
 		this.tagName = 'toggle-button',
 		
-		this[this.$changed] = function({ target: detail }) {
+		this[this.$changed] = function ({ target: detail }) {
 			
 			this.dispatchEvent(new CustomEvent('toggled', { detail }));
 			
 		},
-		this[this.$construct] = function() {
+		this[this.$construct] = function () {
 			
-			const	root = document.createElement('div'),
-					checkbox = document.createElement('input'),
+			const	checkbox = document.createElement('input'),
 					label = document.createElement('label');
-			
-			root.id = 'root',
-			root.classList.add('slider'),
 			
 			checkbox.type = 'checkbox',
 			checkbox.id = 'toggle',
+			checkbox.hidden = true,
 			
 			label.htmlFor = 'toggle',
 			
-			root.append(checkbox, label),
-			
-			this.shadowRoot.append(root);
+			this.shadowRoot.append(checkbox, label);
 			
 		},
 		this[this.$ready] = function (rs) {
@@ -40,7 +35,7 @@ class ToggleButton extends HTMLElement {
 			
 		},
 		
-		this[this.$observedAttributes] = [ 'activates', 'disabled', 'shadow-css' ];
+		this[this.$observedAttributes] = [ 'activated', 'disabled', 'toggle-css' ];
 		
 	}
 	static get observedAttributes() {
@@ -76,15 +71,15 @@ class ToggleButton extends HTMLElement {
 		
 		switch (name) {
 			
-			case 'activates':
-			last ?? (this.activates = true), this.checkbox.checked = !!current;
+			case 'activated':
+			last ?? (this.activated = true), this.checkbox.checked = this.hasAttribute('activated');
 			break;
 			
 			case 'disabled':
 			this.checkbox.toggleAttribute('disabled', this.hasAttribute('disabled'));
 			break;
 			
-			case 'shadow-css':
+			case 'toggle-css':
 			this.initialized.then(() => this.updateShadowCSS());
 			break;
 			
@@ -94,7 +89,7 @@ class ToggleButton extends HTMLElement {
 	
 	updateShadowCSS() {
 		
-		const { $links: $ } = ToggleButton, { shadowCSS: links, shadowRoot } = this, $links = this[$];
+		const { $links: $ } = ToggleButton, { toggleCSS: links, shadowRoot } = this, $links = this[$];
 		let i,l,i0, link;
 		
 		i = -1, l = $links.length;
@@ -108,36 +103,36 @@ class ToggleButton extends HTMLElement {
 		
 	}
 	
-	get activates() {
+	get activated() {
 		
 		return this.checkbox.checked;
 		
 	}
-	set activates(v) {
+	set activated(v) {
 		
-		this.toggleAttribute('activates', !!v);
+		this.toggleAttribute('activated', !!v);
 		
 	}
 	
-	get disabled() {
+	get disables() {
 		
 		return this.hasAttribute('disabled');
 		
 	}
-	set disabled(v) {
+	set disables(v) {
 		
 		this.toggleAttribute('disabled', !!v);
 		
 	}
 	
-	get shadowCSS() {
+	get toggleCSS() {
 		
-		return document.querySelectorAll(this.getAttribute('shadow-css'));
+		return document.querySelectorAll(this.getAttribute('toggle-css'));
 		
 	}
-	set shadowCSS(v) {
+	set toggleCSS(v) {
 		
-		this.setAttribute('shadow-css', v);
+		this.setAttribute('toggle-css', v);
 		
 	}
 	
