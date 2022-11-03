@@ -7,8 +7,11 @@ class ToggleButton extends HTMLElement {
 		this.$changed = Symbol('ToggleButton.changed'),
 		this.$links = Symbol('ToggleButton.links'),
 		this.$ready = Symbol('ToggleButton.ready'),
+		this.$trigger = Symbol('ToggleButton.trigger'),
 		
 		this.tagName = 'toggle-button',
+		
+		this[this.$trigger] = 'change',
 		
 		this[this.$changed] = function ({ target: detail }) {
 			
@@ -60,11 +63,23 @@ class ToggleButton extends HTMLElement {
 		
 		if (!checkbox) throw new Error();
 		
-		checkbox.addEventListener('change', this[$changed]),
-		
 		this[$links] = [],
 		
 		this.initialized = new Promise(ToggleButton[$ready]);
+		
+	}
+	connectedCallback() {
+		
+		const { $changed, $trigger } = ToggleButton;
+		
+		this.checkbox.addEventListener(ToggleButton[$trigger], this[$changed]);
+		
+	}
+	disconnectedCallback() {
+		
+		const { $changed, $trigger } = ToggleButton;
+		
+		this.checkbox.removeEventListener(ToggleButton[$trigger], this[$changed]);
 		
 	}
 	attributeChangedCallback(name, last, current) {
