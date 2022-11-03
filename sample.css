@@ -3,6 +3,7 @@ label {
 	--height: 3rem;
 	--width: calc(var(--height) * 1.618);
 	--background-color: rgba(200,200,200,1);
+	--background-color-disabled: rgba(144,144,144,1);
 	--border-radius: var(--height);
 	--border-width: .3rem;
 	--border-color: transparent;
@@ -10,10 +11,12 @@ label {
 	--switch-height: calc(var(--height) * 1);
 	--switch-width: var(--switch-height);
 	--switch-background-color: rgba(255,255,255,1);
+	--switch-background-color-disabled: rgba(200,200,200,1);
 	--switch-transition-duration: .2s;
 	--switch-transition-timing-function: ease;
 	
 	--activate-background-color: rgba(0,200,0,1);
+	--activate-background-color-disabled: rgba(80,80,80,1);
 	
 	background: var(--background-color);
 	border: var(--border-width) solid var(--border-color);
@@ -23,6 +26,13 @@ label {
 	overflow: hidden;
 	position: relative;
 	width: var(--width);
+	
+}
+:disabled + label {
+	
+	--background-color: var(--background-color-disabled);
+	--switch-background-color: var(--switch-background-color-disabled);
+	--activate-background-color: var(--activate-background-color-disabled);
 	
 }
 label::before, label::after {
@@ -38,10 +48,13 @@ label::before {
 	height: var(--switch-height);
 	position: relative;
 	width: var(--switch-width);
-	right: 0;
+	left: 0;
 	z-index: 1;
 	
-	transition: right var(--switch-transition-duration) var(--switch-transition-timing-function);
+}
+:checked + ::before {
+	
+	left: calc((100% - var(--switch-width)) * 1);
 	
 }
 label::after {
@@ -53,16 +66,14 @@ label::after {
 	top: 0;
 	width: 100%;
 	
-	transition: left var(--switch-transition-duration) var(--switch-transition-timing-function);
-	
-}
-:checked + ::before {
-	
-	right: calc((100% - var(--switch-width)) * -1);
-	
 }
 :checked + ::after {
 	
 	left: calc((100% - var(--switch-width)) - var(--switch-width));
+	
+}
+:not(:disabled) + label::before, :not(:disabled) + label::after {
+	
+	transition: left var(--switch-transition-duration) var(--switch-transition-timing-function);
 	
 }
