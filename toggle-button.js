@@ -5,6 +5,7 @@ class ToggleButton extends HTMLElement {
 		this.$observedAttributes = Symbol('ToggleButton.observedAttributes'),
 		this.$construct = Symbol('ToggleButton.construct'),
 		this.$changed = Symbol('ToggleButton.changed'),
+		this.$resized = Symbol('ToggleButton.resized'),
 		this.$links = Symbol('ToggleButton.links'),
 		this.$ready = Symbol('ToggleButton.ready'),
 		this.$trigger = Symbol('ToggleButton.trigger'),
@@ -39,6 +40,13 @@ class ToggleButton extends HTMLElement {
 			document.readyState === 'loading' ? addEventListener('DOMContentLoaded', rs, { once: true }) : rs();
 			
 		},
+		this[this.$resized] = function () {
+			
+			const { height } = this.getBoundingClientRect();
+			
+			this.label.style.setProperty('--height', height + 'px');
+			
+		},
 		
 		this[this.$observedAttributes] = [ 'activated', 'disabled', 'toggle-css' ];
 		
@@ -53,7 +61,7 @@ class ToggleButton extends HTMLElement {
 		
 		super();
 		
-		const { $changed, $construct, $id, $links, $ready } = ToggleButton;
+		const { $changed, $construct, $id, $links, $ready, $resized } = ToggleButton;
 		
 		this[$changed] = ToggleButton[$changed].bind(this),
 		
@@ -61,13 +69,16 @@ class ToggleButton extends HTMLElement {
 		
 		ToggleButton[$construct].call(this);
 		
-		const checkbox = this.checkbox = this.shadowRoot.querySelector(`input#${ToggleButton[$id]}[type="checkbox"]`);
+		const checkbox = this.checkbox = this.shadowRoot.querySelector(`input#${ToggleButton[$id]}[type="checkbox"]`),
+				label = this.label = this.shadowRoot.querySelector(`input#${ToggleButton[$id]}[type="checkbox"] + label`);
 		
-		if (!checkbox) throw new Error();
+		if (!checkbox || !label) throw new Error();
 		
 		this[$links] = [],
 		
-		this.initialized = new Promise(ToggleButton[$ready]);
+		this.initialized = new Promise(ToggleButton[$ready]),
+		
+		(this.resizeObserver = new ResizeObserver(this.resized = ToggleButton[$resized].bind(this))).observe(this);
 		
 	}
 	connectedCallback() {
