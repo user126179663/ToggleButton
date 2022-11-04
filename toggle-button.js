@@ -8,10 +8,13 @@ class ToggleButton extends HTMLElement {
 		this.$links = Symbol('ToggleButton.links'),
 		this.$ready = Symbol('ToggleButton.ready'),
 		this.$trigger = Symbol('ToggleButton.trigger'),
+		this.$id = Symbol('ToggleButton.id'),
 		
 		this.tagName = 'toggle-button',
 		
 		this[this.$trigger] = 'change',
+		
+		this[this.$id] = 'toggle',
 		
 		this[this.$changed] = function ({ target: detail }) {
 			
@@ -21,13 +24,12 @@ class ToggleButton extends HTMLElement {
 		this[this.$construct] = function () {
 			
 			const	checkbox = document.createElement('input'),
-					label = document.createElement('label');
+					label = document.createElement('label'),
+					id = ToggleButton[ToggleButton.$id];
 			
 			checkbox.type = 'checkbox',
-			checkbox.id = 'toggle',
+			checkbox.id = label.htmlFor = id,
 			checkbox.hidden = true,
-			
-			label.htmlFor = 'toggle',
 			
 			this.shadowRoot.append(checkbox, label);
 			
@@ -51,15 +53,15 @@ class ToggleButton extends HTMLElement {
 		
 		super();
 		
-		const { $changed, $construct, $links, $ready } = ToggleButton;
+		const { $changed, $construct, $id, $links, $ready } = ToggleButton;
 		
 		this[$changed] = ToggleButton[$changed].bind(this),
 		
 		this.attachShadow({ mode: 'open' }),
 		
-		this.constructor[$construct].call(this);
+		ToggleButton[$construct].call(this);
 		
-		const checkbox = this.checkbox = this.shadowRoot.querySelector('input#toggle[type="checkbox"]');
+		const checkbox = this.checkbox = this.shadowRoot.querySelector(`input#${ToggleButton[$id]}[type="checkbox"]`);
 		
 		if (!checkbox) throw new Error();
 		
@@ -129,12 +131,12 @@ class ToggleButton extends HTMLElement {
 		
 	}
 	
-	get disables() {
+	get disabled() {
 		
 		return this.hasAttribute('disabled');
 		
 	}
-	set disables(v) {
+	set disabled(v) {
 		
 		this.toggleAttribute('disabled', !!v);
 		
