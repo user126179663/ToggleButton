@@ -1,0 +1,20 @@
+@import url("sample.css");
+
+label:not(div) {
+
+	--switch-height: calc(var(--width) - var(--border-width) * 2);
+	--switch-width: 100%;
+
+	--switch-left-from: 0;
+	--switch-left-to: 0;
+	--switch-top-from: calc(100% - var(--switch-height));
+	--switch-top-to: 0;
+
+	--activate-left-from: 0;
+	--activate-left-to: 0;
+	--activate-top-from: calc(var(--height) - var(--switch-height) * .5);
+	--activate-top-to: 0;
+	
+	--transition-direction: top;
+	
+}

@@ -19,6 +19,8 @@ class ToggleButton extends HTMLElement {
 		
 		this[this.$changed] = function ({ target: detail }) {
 			
+			this.activated = detail.checked,
+			
 			this.dispatchEvent(new CustomEvent('toggled', { detail }));
 			
 		},
@@ -42,9 +44,10 @@ class ToggleButton extends HTMLElement {
 		},
 		this[this.$resized] = function () {
 			
-			const { height } = this.getBoundingClientRect();
+			const { height, width } = this.getBoundingClientRect();
 			
-			this.label.style.setProperty('--height', height + 'px');
+			this.label.style.setProperty('--height', height + 'px'),
+			this.label.style.setProperty('--width', width + 'px');
 			
 		},
 		
