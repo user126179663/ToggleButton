@@ -10,29 +10,39 @@ class ToggleButton extends HTMLElement {
 		this.$ready = Symbol('ToggleButton.ready'),
 		this.$trigger = Symbol('ToggleButton.trigger'),
 		this.$id = Symbol('ToggleButton.id'),
+		this.$mutated = Symbol('ToggleButton.mutated'),
 		
 		this.tagName = 'toggle-button',
 		
 		this[this.$trigger] = 'change',
 		
 		this[this.$id] = 'toggle',
+		this[this.$mutated] = 'data-toggle-button-mutated',
 		
-		this[this.$changed] = function ({ target: detail }) {
+		this[this.$changed] = function ({ isTrusted, target: detail }) {
+			
+			const { constructor } = this, { $mutated } = constructor;
+			
+			this.label.toggleAttribute(constructor[$mutated], false),
 			
 			this.activated = detail.checked,
 			
-			this.dispatchEvent(new CustomEvent('toggled', { detail }));
+			this.dispatchEvent(new CustomEvent('toggled', { detail: { isTrusted, detail } }));
 			
 		},
 		this[this.$construct] = function () {
 			
-			const	checkbox = document.createElement('input'),
+			const	{ constructor: { $id } } = this,
+					checkbox = document.createElement('input'),
 					label = document.createElement('label'),
-					id = ToggleButton[ToggleButton.$id];
+					content = document.createElement('slot'),
+					id = ToggleButton[$id];
 			
 			checkbox.type = 'checkbox',
-			checkbox.id = label.htmlFor = id,
 			checkbox.hidden = true,
+			checkbox.id = label.htmlFor = content.name = id,
+			
+			label.appendChild(content),
 			
 			this.shadowRoot.append(checkbox, label);
 			
@@ -44,7 +54,10 @@ class ToggleButton extends HTMLElement {
 		},
 		this[this.$resized] = function () {
 			
-			const { height, width } = this.getBoundingClientRect();
+			const	{ height, width } = this.getBoundingClientRect(),
+					{ constructor } = this, { $mutated } = constructor;
+			
+			this.label.toggleAttribute(constructor[$mutated], true),
 			
 			this.label.style.setProperty('--height', height + 'px'),
 			this.label.style.setProperty('--width', width + 'px');
@@ -86,7 +99,9 @@ class ToggleButton extends HTMLElement {
 	}
 	connectedCallback() {
 		
-		const { $changed, $trigger } = ToggleButton;
+		const { constructor } = this, { $changed, $mutated, $trigger } = constructor;
+		
+		this.label.toggleAttribute(constructor[$mutated], true),
 		
 		this.checkbox.addEventListener(ToggleButton[$trigger], this[$changed]);
 		

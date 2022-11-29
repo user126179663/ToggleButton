@@ -1,8 +1,8 @@
 label {
 	
 	/*
-		A custom property "--size" is defined by <toggle-button> internally.
-		That indicates the height of the bounding box for the custom element.
+		custom properties "--width" and "--height" are set when the <toggle-button> is resized.
+		Those indicates the bounding height for the custom element.
 	*/
 	
 	--background-color: rgba(200,200,200,1);
@@ -17,6 +17,7 @@ label {
 	--switch-background-color-disabled: rgba(200,200,200,1);
 	--switch-transition-duration: .2s;
 	--switch-transition-timing-function: ease;
+	--switch-transition-delay: 0s;
 	--switch-left-from: 0;
 	--switch-left-to: calc(100% - var(--switch-width));
 	--switch-top-from: 0;
@@ -25,11 +26,13 @@ label {
 	--activate-background-color: rgba(0,200,0,1);
 	--activate-background-color-disabled: rgba(80,80,80,1);
 	--activate-left-from: calc(var(--width) * -1 + var(--switch-width) * .5);
-	--activate-left-to: calc(100% - var(--switch-width) * 2);
+	--activate-left-to: calc(100% - var(--width));
 	--activate-top-from: 0;
 	--activate-top-to: 0;
 	
 	--transition-direction: left;
+	
+	--transition: var(--transition-direction) var(--switch-transition-duration) var(--switch-transition-timing-function) var(--switch-transition-delay);
 	
 	background: var(--background-color);
 	border: var(--border-width) solid var(--border-color);
@@ -60,10 +63,10 @@ label::before {
 	background: var(--switch-background-color);
 	border-radius: var(--border-radius);
 	height: var(--switch-height);
-	position: relative;
-	width: var(--switch-width);
 	left: var(--switch-left-from);
+	position: relative;
 	top: var(--switch-top-from);
+	width: var(--switch-width);
 	z-index: 1;
 	
 }
@@ -89,8 +92,9 @@ label::after {
 	top: var(--activate-top-to);
 	
 }
-:not(:disabled) + label::before, :not(:disabled) + label::after {
+:not(:disabled) + label:not([data-toggle-button-mutated])::before,
+:not(:disabled) + label:not([data-toggle-button-mutated])::after {
 	
-	transition: var(--transition-direction) var(--switch-transition-duration) var(--switch-transition-timing-function);
+	transition: var(--transition);
 	
 }
